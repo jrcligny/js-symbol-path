@@ -1,4 +1,4 @@
-# template-javascript
+# js-symbol-path
 
 ## Usage
 

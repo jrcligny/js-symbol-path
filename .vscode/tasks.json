@@ -4,7 +4,7 @@
 		{
 			"label": "Run tests",
 			"type": "shell",
-			"command": "npx jest --coverage=${input:test-coverage}",
+			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage=${input:test-coverage}",
 			"group": {
 				"kind": "test",
 				"isDefault": true
@@ -13,7 +13,7 @@
 		{
 			"label": "Run Current Spec File",
 			"type": "shell",
-			"command": "npx jest --findRelatedTests ${fileBasename} --coverage=false",
+			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js --findRelatedTests ${fileBasename} --coverage=false",
 			"group": {
 				"kind": "test",
 				"isDefault": false
@@ -26,7 +26,7 @@
 		{
 			"label": "Run Related Spec File",
 			"type": "shell",
-			"command": "npx jest -t ${fileBasenameNoExtension} --coverage=false",
+			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js -t ${fileBasenameNoExtension} --coverage=false",
 			"group": {
 				"kind": "test",
 				"isDefault": false

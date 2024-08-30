@@ -1,4 +1,4 @@
-module.exports = async () =>
+export default async () =>
 {
 	return {
 		"verbose": true,
@@ -25,6 +25,7 @@ module.exports = async () =>
 		"collectCoverage": true,
 		"collectCoverageFrom": [
 			"./src/**",
+			"!src/main.{js,jsx,ts,tsx}",
 			"!src/index.{js,jsx,ts,tsx}",
 		]
 	}
