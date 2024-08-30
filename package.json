@@ -1,0 +1,42 @@
+{
+	"name": "@jrcligny/template-javascript",
+	"description": "A template for JavaScript projects",
+	"version": "1.0.0",
+	"author": "Jean-Rémy Cligny",
+	"private": true,
+	"homepage": "https://github.com/jrcligny/template-javascript#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/jrcligny/template-javascript.git"
+	},
+	"bugs": {
+		"url": "https://github.com/jrcligny/template-javascript/issues"
+	},
+	"keywords": [
+		"GitHub",
+		"Visual Studio Code",
+		"JavaScript"
+	],
+	"exports": {
+		".": "./dist/main.js"
+	},
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"lint": "npm run lint:js",
+		"lint:js": "npx eslint .",
+		"test": "npx jest --passWithNoTests",
+		"package": "node esbuild.config.mjs",
+		"all": "npm run lint && npm run test && npm run package"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.1.0",
+		"@eslint/js": "^9.9.0",
+		"esbuild": "^0.23.0",
+		"eslint": "^9.9.0",
+		"eslint-plugin-jest": "^28.7.0",
+		"jest": "^29.7.0"
+	}
+}

@@ -1,0 +1,62 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run tests",
+			"type": "shell",
+			"command": "npx jest --coverage=${input:test-coverage}",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Run Current Spec File",
+			"type": "shell",
+			"command": "npx jest --findRelatedTests ${fileBasename} --coverage=false",
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"showReuseMessage": false,
+			}
+		},
+		{
+			"label": "Run Related Spec File",
+			"type": "shell",
+			"command": "npx jest -t ${fileBasenameNoExtension} --coverage=false",
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"showReuseMessage": false,
+			}
+		},
+		{
+			"label": "Open Coverage Report",
+			"type": "shell",
+			"command": "start ${workspaceFolder}/coverage/lcov-report/index.html",
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "silent",
+				"showReuseMessage": false,
+			}
+		}
+	],
+	"inputs": [
+		{
+			"id": "test-coverage",
+			"type": "pickString",
+			"description": "Do you want to enable coverage?",
+			"options": ["true", "false"],
+			"default": "false"
+		}
+	],
+}
