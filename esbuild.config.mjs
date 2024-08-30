@@ -8,4 +8,5 @@ await esbuild.build({
 	sourcemap: true,
 	outdir: 'dist',
 	allowOverwrite: true,
+	format: 'esm',
 })
