@@ -6,7 +6,7 @@ await esbuild.build({
 	platform: 'node',
 	target: 'node20',
 	sourcemap: true,
-	outdir: 'dist',
 	allowOverwrite: true,
-	format: 'esm',
+	format: 'cjs',
+	outfile: 'dist/main.cjs',
 })
