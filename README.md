@@ -1,5 +1,14 @@
 # js-symbol-path
 
+```bash
+node dist/main.js get-path --file filename --line line
+# output {"file":"filename","line":line,"path":"path"}
+```
+
+## References
+
+- [Command Line Interface Guidelines](https://clig.dev/)
+
 ## Usage
 
 ### Visual Studio Code tasks
