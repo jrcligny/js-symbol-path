@@ -92,7 +92,7 @@ export default class TypescriptHelper {
 	}
 	//#endregion getPath
 
-	//#region isInRange
+	//#region lineRange
 	/**
 	 * @param {import('typescript').Node} node 
 	 * @param {number} line 1-based line number
@@ -101,16 +101,15 @@ export default class TypescriptHelper {
 	isInRange(node, line) {
 		if (line < 1) return false
 		if(!node) throw new Error('invalid node')
-		const { startLine, endLine } = this.#getLineRange(node)
+		const { startLine, endLine } = this.getLineRange(node)
 		return line >= startLine && line <= endLine
 	}
 
 	/**
-	 * @private
 	 * @param {import('typescript').Node} node 
 	 * @returns {{startLine: number, endLine: number}} 1-based line numbers
 	 */
-	#getLineRange(node) {
+	getLineRange(node) {
 		const startLine = this.#getLine(node, node.getStart())
 		const endLine = this.#getLine(node, node.getEnd())
 		return { startLine, endLine }
@@ -125,7 +124,7 @@ export default class TypescriptHelper {
 	#getLine(node, position) {
 		return this.#ts.getLineAndCharacterOfPosition(node.getSourceFile(), position).line + 1
 	}
-	//#endregion isInRange
+	//#endregion lineRange
 
 	/**
 	 * @param {import('typescript').Node} node 

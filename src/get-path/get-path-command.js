@@ -6,13 +6,13 @@
 
 export default class GetPathCommand {
 	static command = 'get-path'
-	static describe = 'get symbol path at line <line> in file at <file>'
+	static describe = 'Get symbol path at line <line> in file at <file>.'
 
 	/** @type {import('yargs').CommandBuilder} */
 	static builder = {
 		file: {
 			alias: 'f',
-			describe: 'Load a file',
+			describe: 'Source file to load',
 			demandOption: true,
 			string: true,
 		},
@@ -30,14 +30,14 @@ export default class GetPathCommand {
 	 */
 	#fs
 	/**
-	 * @type {import('../helpers/typescript-helper')}
+	 * @type {import('../helpers/typescript-helper').default}
 	 * Dependency injection for typescript-helper module
 	 */
 	#tsHelper
 
 	/**
 	 * @param {import('node:fs/promises')} fs Dependency injection for fs module
-	 * @param {import('../helpers/typescript-helper')} tsHelper Dependency injection for typescript-helper module
+	 * @param {import('../helpers/typescript-helper').default} tsHelper Dependency injection for typescript-helper module
 	 */
 	constructor(fs, tsHelper) {
 		this.#fs = fs

@@ -24,7 +24,8 @@ describe('main', () => {
 			// Assert
 			// verify the output is correct
 			// -command section
-			expect(output).toEqual(expect.stringContaining('get-path  get symbol path at line <line> in file at <file>'))
+			expect(output).toEqual(expect.stringContaining('map-diffs-to-paths  Based on <file>'))
+			expect(output).toEqual(expect.stringContaining('get-path            Get symbol path'))
 			// -options section
 			expect(output).toEqual(expect.stringContaining('  -h, --help     Show help                                             [boolean]'))
 			expect(output).toEqual(expect.stringContaining('  -v, --version  Show version number                                   [boolean]'))
@@ -50,10 +51,10 @@ describe('main', () => {
 	
 			// Assert
 			// verify the output is correct
-			expect(output).toEqual(expect.stringContaining('get symbol path at line <line> in file at <file>'))
+			expect(output).toEqual(expect.stringContaining('Get symbol path at line <line> in file at <file>.'))
 			// -options section
 			expect(output).toEqual(expect.stringContaining('  -h, --help     Show help                                             [boolean]'))
-			expect(output).toEqual(expect.stringContaining('  -f, --file     Load a file                                 [string] [required]'))
+			expect(output).toEqual(expect.stringContaining('  -f, --file     Source file to load                         [string] [required]'))
 			expect(output).toEqual(expect.stringContaining('  -l, --line     Line to get the symbol path for (1-based)   [number] [required]'))
 			expect(output).toEqual(expect.stringContaining('  -v, --version  Show version number                                   [boolean]'))
 		})
@@ -113,6 +114,99 @@ describe('main', () => {
 			// Assert
 			expect(mockConsoleLog).toHaveBeenCalledTimes(1)
 			expect(mockConsoleLog).toHaveBeenCalledWith(expected)
+			expect(output).toBe('')
+		})
+	})
+
+	describe('map-diffs-to-paths', () => {
+		
+		it.each([
+			{ input: 'map-diffs-to-paths --help' },
+			{ input: 'map-diffs-to-paths --help' },
+			{ input: 'map-diffs-to-paths' },
+		])('returns help output', async ({ input }) => {
+			// Arrange
+	
+			// Act
+			// run the command module with --help as argument
+			const output = await new Promise((resolve) => {
+				parser.parse(input, (err, argv, output) => {
+					resolve(output)
+				})
+			})
+	
+			// Assert
+			// verify the output is correct
+			expect(output).toEqual(expect.stringContaining('Based on <file>, get symbol path for each diff listed in <diff-file>'))
+			// -options section
+			expect(output).toEqual(expect.stringContaining('  -d, --diff-file  Diff file to load to get the diffs.       [string] [required]'))
+			expect(output).toEqual(expect.stringContaining('  -f, --file       Source file to load                       [string] [required]'))
+			expect(output).toEqual(expect.stringContaining('  -h, --help       Show help                                           [boolean]'))
+			expect(output).toEqual(expect.stringContaining('  -v, --version    Show version number                                 [boolean]'))
+		})
+
+		it('returns the symbol paths for each diff using lib-sample.js', async () => {
+			// Arrange
+			const arg = 'map-diffs-to-paths -f ./resources/lib-sample.js -d ./resources/lib-sample.diff'
+			const mockConsoleLog = jest.spyOn(global.console, 'log').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve) => {
+				parser.parse(arg, (err, argv, output) => {
+					resolve(output)
+				})
+			})
+	
+			// Assert
+			expect(mockConsoleLog).toHaveBeenCalledTimes(1)
+			expect(mockConsoleLog).toHaveBeenCalledWith(JSON.stringify([
+				{
+					"symbol": "DirectoryListHandler.constructor",
+					"line": 3,
+					"content": "M"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 8,
+					"content": "A"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 9,
+					"content": "A"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 10,
+					"content": "A"
+				},
+				{
+					"symbol": null,
+					"line": 16,
+					"content": "A"
+				},
+				{
+					"symbol": "instantiate",
+					"line": 17,
+					"content": "A"
+				},
+				{
+					"symbol": "instantiate",
+					"line": 18,
+					"content": "A"
+				},
+				{
+					"symbol": "instantiate",
+					"line": 19,
+					"content": "A"
+				},
+				{
+					"symbol": null,
+					"line": 20,
+					"content": "A"
+				}
+			]))
 			expect(output).toBe('')
 		})
 	})
