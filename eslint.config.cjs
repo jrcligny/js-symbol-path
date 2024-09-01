@@ -14,6 +14,7 @@ module.exports = [...compat.extends("eslint:recommended", "plugin:jest/recommend
 		"node_modules/*",
 		"coverage/*",
 		"dist/*",
+		"resources/*",
 	],
 },{
 	plugins: {

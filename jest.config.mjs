@@ -9,9 +9,9 @@ export default async () =>
 		],
 		"testMatch": [
 			"**/*.spec.js",
-			"**/*.spec.e2e.js",
-			"**/*.spec.int.js",
-			"**/*.spec.unit.js",
+			"**/*.e2e.spec.js",
+			"**/*.int.spec.js",
+			"**/*.unit.spec.js",
 		],
 		"testPathIgnorePatterns": [
 			"/node_modules/",
@@ -25,7 +25,6 @@ export default async () =>
 		"collectCoverage": true,
 		"collectCoverageFrom": [
 			"./src/**",
-			"!src/main.{js,jsx,ts,tsx}",
 			"!src/index.{js,jsx,ts,tsx}",
 		]
 	}
