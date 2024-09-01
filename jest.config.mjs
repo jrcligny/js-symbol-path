@@ -25,7 +25,6 @@ export default async () =>
 		"collectCoverage": true,
 		"collectCoverageFrom": [
 			"./src/**",
-			"!src/main.{js,jsx,ts,tsx}",
 			"!src/index.{js,jsx,ts,tsx}",
 		]
 	}
