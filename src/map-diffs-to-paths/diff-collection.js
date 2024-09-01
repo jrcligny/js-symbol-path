@@ -23,8 +23,11 @@ export default class DiffCollection {
 	 */
 	constructor(lines) {
 		this.#lines = new Map()
-		lines.map(line => line.split('|', 2))
-			.map(([line, content]) => [parseInt(line, 10), content])
+		lines
+			.map(line => {
+				const [num, ...content] = line.split('|')
+				return [parseInt(num, 10), content.join('|')]
+			})
 			.forEach(([line, content]) => {
 				if (!this.#firstLine || line < this.#firstLine) {
 					this.#firstLine = line

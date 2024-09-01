@@ -2,6 +2,9 @@
  * @typedef {object} GetPathArgs
  * @property {string} file
  * @property {number} line
+ * @property {boolean} [json]
+ * @property {boolean} [minified]
+ * @property {boolean} [plain]
  */
 
 export default class GetPathCommand {
@@ -21,7 +24,26 @@ export default class GetPathCommand {
 			describe: 'Line to get the symbol path for (1-based)',
 			demandOption: true,
 			number: true,
-		}
+		},
+		json: {
+			alias: 'j',
+			describe: 'Output the result as JSON',
+			demandOption: false,
+			boolean: true,
+		},
+		minified: {
+			alias: 'm',
+			describe: 'Output the result as minified JSON',
+			implies: 'json',
+			demandOption: false,
+			boolean: true,
+		},
+		plain: {
+			alias: 'p',
+			describe: 'Output the result as plain text',
+			demandOption: false,
+			boolean: true,
+		},
 	}
 
 	/**
@@ -58,13 +80,39 @@ export default class GetPathCommand {
 		const children = sourceFile.getChildren(sourceFile)	
 		const matchingNode = this.#findNode(children, line)
 
+		let path = ''
 		if (matchingNode) {
-			const path = this.#tsHelper.getPath(matchingNode)
-			console.log(JSON.stringify({ file, line, path }))
+			path = this.#tsHelper.getPath(matchingNode)
+		}
+
+		if (argv.json) {
+			this.#outputJson({ file, line, path }, argv.minified)
 		}
 		else {
-			console.log(JSON.stringify({ file, line, path: '' }))
+			this.#outputPlain(path)
 		}
+	}
+
+	/**
+	 * @private
+	 * @param {{file: string; line: number; path: string;}} object 
+	 * @param {boolean} minified 
+	 */
+	#outputJson(object, minified) {
+		if (minified) {
+			console.log(JSON.stringify(object))
+		}
+		else {
+			console.log(JSON.stringify(object, null, 2))
+		}
+	}
+
+	/**
+	 * @private
+	 * @param {string} path
+	 */
+	#outputPlain(path) {
+		console.log(path)
 	}
 
 	/**

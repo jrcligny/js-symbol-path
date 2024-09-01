@@ -1,7 +1,10 @@
 /**
- * @typedef {object} GetDiffPathsArgs
+ * @typedef {object} MapDiffsToPathsArgs
  * @property {string} file
  * @property {string} diff-file
+ * @property {boolean} [json]
+ * @property {boolean} [minified]
+ * @property {boolean} [plain]
  */
 
 export default class MapDiffsToPathsCommand {
@@ -21,7 +24,26 @@ export default class MapDiffsToPathsCommand {
 			describe: 'Diff file to load to get the diffs.',
 			demandOption: true,
 			string: true,
-		}
+		},
+		json: {
+			alias: 'j',
+			describe: 'Output the result as JSON',
+			demandOption: false,
+			boolean: true,
+		},
+		minified: {
+			alias: 'm',
+			describe: 'Output the result as minified JSON',
+			implies: 'json',
+			demandOption: false,
+			boolean: true,
+		},
+		plain: {
+			alias: 'p',
+			describe: 'Output the result as plain text',
+			demandOption: false,
+			boolean: true,
+		},
 	}
 
 	/**
@@ -52,7 +74,7 @@ export default class MapDiffsToPathsCommand {
 	}
 
 	/**
-	 * @param {import('yargs').ArgumentsCamelCase<GetDiffPathsArgs>} argv
+	 * @param {import('yargs').ArgumentsCamelCase<MapDiffsToPathsArgs>} argv
 	 * @returns {Promise<void>}
 	 */
 	async handler(argv) {
@@ -63,12 +85,44 @@ export default class MapDiffsToPathsCommand {
 
 		const diffContent = await this.#fs.readFile(diffLine, 'utf-8')
 
-		const diffCollection = this.#diffCollectionFactory.create(diffContent.split('\n'))
+		// @todo split lines according to the file's end of line character
+		const diffCollection = this.#diffCollectionFactory.create(diffContent.split('\r\n'))
 
-		const children = sourceFile.getChildren(sourceFile)	
+		const children = sourceFile.getChildren(sourceFile)
 		this.#findNodes(children, diffCollection)
 
-		console.log(JSON.stringify(diffCollection.toJSON()))
+		if (argv.json) {
+			this.#outputJson(diffCollection, argv.minified)
+		}
+		else {
+			this.#outputPlain(diffCollection)
+		}
+	}
+
+	/**
+	 * @private
+	 * @param {import('./diff-collection').default} diffCollection 
+	 * @param {boolean} minified 
+	 */
+	#outputJson(diffCollection, minified) {
+		const json = diffCollection.toJSON()
+		if (minified) {
+			console.log(JSON.stringify(json))
+		}
+		else {
+			console.log(JSON.stringify(json, null, 2))
+		}
+	}
+
+	/**
+	 * @private
+	 * @param {import('./diff-collection').default} diffCollection
+	 */
+	#outputPlain(diffCollection) {
+		const json = diffCollection.toJSON()
+		for (const { line, symbol, content } of json) {
+			console.log(`${line}|${symbol??''}|${content}`)
+		}
 	}
 
 	/**
