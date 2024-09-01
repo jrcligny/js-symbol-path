@@ -1,12 +1,12 @@
 import * as esbuild from 'esbuild'
 
 await esbuild.build({
-	entryPoints: ['src/main.js'],
+	entryPoints: ['src/index.js'],
 	bundle: true,
 	platform: 'node',
 	target: 'node20',
 	sourcemap: true,
 	allowOverwrite: true,
 	format: 'cjs',
-	outfile: 'dist/main.cjs',
+	outfile: 'dist/index.cjs',
 })

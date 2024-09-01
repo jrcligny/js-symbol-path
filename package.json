@@ -14,7 +14,7 @@
 	},
 	"keywords": [],
 	"exports": {
-		".": "./dist/main.js"
+		".": "./dist/index.cjs"
 	},
 	"engines": {
 		"node": ">=20"
