@@ -1,0 +1,9 @@
+3|M|this.directories = directories;
+8|A|removeDirectory(directory) {
+9|A|this.directories = this.directories.filter(d => d !== directory);
+10|A|}
+16|A|
+17|A|export function instantiate(directories) {
+18|A|return new DirectoryListHandler(directories);
+19|A|}
+20|A|
