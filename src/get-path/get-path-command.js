@@ -7,11 +7,19 @@
  * @property {boolean} [plain]
  */
 
+/**
+ * @typedef {import('yargs').CommandBuilder} CommandBuilder
+ * @typedef {import('yargs').ArgumentsCamelCase<GetPathArgs>} ExtendedGetPathArgs
+ * @typedef {import('typescript').Node} TypescriptNode
+ * @typedef {import('../helpers/file-system-helper').default} FileSystemHelper
+ * @typedef {import('../helpers/typescript-helper').default} TypescriptHelper
+ */
+
 export default class GetPathCommand {
 	static command = 'get-path'
 	static describe = 'Get symbol path at line <line> in file at <file>.'
 
-	/** @type {import('yargs').CommandBuilder} */
+	/** @type {CommandBuilder} */
 	static builder = {
 		file: {
 			alias: 'f',
@@ -47,33 +55,33 @@ export default class GetPathCommand {
 	}
 
 	/**
-	 * @type {import('node:fs/promises')}
-	 * Dependency injection for fs module
+	 * @type {FileSystemHelper}
+	 * Dependency injection for file-system helper
 	 */
-	#fs
+	#fsHelper
 	/**
-	 * @type {import('../helpers/typescript-helper').default}
-	 * Dependency injection for typescript-helper module
+	 * @type {TypescriptHelper}
+	 * Dependency injection for typescript helper
 	 */
 	#tsHelper
 
 	/**
-	 * @param {import('node:fs/promises')} fs Dependency injection for fs module
-	 * @param {import('../helpers/typescript-helper').default} tsHelper Dependency injection for typescript-helper module
+	 * @param {FileSystemHelper} fsHelper Dependency injection for file-system helper
+	 * @param {TypescriptHelper} tsHelper Dependency injection for typescript helper
 	 */
-	constructor(fs, tsHelper) {
-		this.#fs = fs
+	constructor(fsHelper, tsHelper) {
+		this.#fsHelper = fsHelper
 		this.#tsHelper = tsHelper
 	}
 
 	/**
-	 * @param {import('yargs').ArgumentsCamelCase<GetPathArgs>} argv
+	 * @param {ExtendedGetPathArgs} argv
 	 * @returns {Promise<void>}
 	 */
 	async handler(argv) {
 		const { file, line } = argv
 
-		const content = await this.#fs.readFile(file, 'utf-8')
+		const content = await this.#fsHelper.readFile(file)
 
 		const sourceFile = await this.#tsHelper.createSourceFile(file, content)
 
@@ -116,9 +124,9 @@ export default class GetPathCommand {
 	}
 
 	/**
-	 * @param {import('typescript').Node[]} nodes 
+	 * @param {TypescriptNode[]} nodes 
 	 * @param {number} line 
-	 * @returns {import('typescript').Node|undefined}
+	 * @returns {TypescriptNode|undefined}
 	 */
 	#findNode(nodes, line) {
 		for (const node of nodes) {

@@ -1,18 +1,26 @@
+/**
+ * @typedef {import('node:path')} NodePathModule
+ * @typedef {import('typescript')} TypescriptModule
+ * @typedef {import('typescript').SourceFile} SourceFile
+ * @typedef {import('typescript').ScriptKind} ScriptKind
+ * @typedef {import('typescript').Node} TypescriptNode
+ */
+
 export default class TypescriptHelper {
 	/**
-	 * @type {import('node:path')}
+	 * @type {NodePathModule}
 	 * Dependency injection for node:path module
 	 */
 	#path
 	/**
-	 * @type {import('typescript')}
+	 * @type {TypescriptModule}
 	 * Dependency injection for typescript module
 	 */
 	#ts
 
 	/**
-	 * @param {import('node:path')} path Dependency injection for node:path module
-	 * @param {import('typescript')} ts Dependency injection for typescript module
+	 * @param {NodePathModule} path Dependency injection for node:path module
+	 * @param {TypescriptModule} ts Dependency injection for typescript module
 	 */
 	constructor(path, ts) {
 		this.#path = path
@@ -23,7 +31,7 @@ export default class TypescriptHelper {
 	/**
 	 * @param {string} filename
 	 * @param {string} content
-	 * @returns {Promise<import('typescript').SourceFile>}
+	 * @returns {Promise<SourceFile>}
 	 */
 	async createSourceFile(filename, content) {
 		const scriptKind = this.#getScriptKind(filename)
@@ -39,7 +47,7 @@ export default class TypescriptHelper {
 	/**
 	 * @private
 	 * @param {string} filename 
-	 * @returns {import('typescript').ScriptKind}
+	 * @returns {ScriptKind}
 	 */
 	#getScriptKind(filename) {
 		const extname = this.#path.extname(filename).toLowerCase()
@@ -64,7 +72,7 @@ export default class TypescriptHelper {
 
 	//#region getPath
 	/**
-	 * @param {import('typescript').Node} node 
+	 * @param {TypescriptNode} node 
 	 * @returns {string}
 	 */
 	getPath(node) {
@@ -80,7 +88,7 @@ export default class TypescriptHelper {
 
 	/**
 	 * @private
-	 * @param {import('typescript').Node} node 
+	 * @param {TypescriptNode} node 
 	 * @returns {string|undefined}
 	 */
 	#tryToGetName(node) {
@@ -94,7 +102,7 @@ export default class TypescriptHelper {
 
 	//#region lineRange
 	/**
-	 * @param {import('typescript').Node} node 
+	 * @param {TypescriptNode} node 
 	 * @param {number} line 1-based line number
 	 * @returns {boolean}
 	 */
@@ -106,7 +114,7 @@ export default class TypescriptHelper {
 	}
 
 	/**
-	 * @param {import('typescript').Node} node 
+	 * @param {TypescriptNode} node 
 	 * @returns {{startLine: number, endLine: number}} 1-based line numbers
 	 */
 	getLineRange(node) {
@@ -117,7 +125,7 @@ export default class TypescriptHelper {
 
 	/**
 	 * @private
-	 * @param {import('typescript').Node} node 
+	 * @param {TypescriptNode} node 
 	 * @param {number} position 
 	 * @returns {number} 1-based line number
 	 */
@@ -127,7 +135,7 @@ export default class TypescriptHelper {
 	//#endregion lineRange
 
 	/**
-	 * @param {import('typescript').Node} node 
+	 * @param {TypescriptNode} node 
 	 * @returns {boolean}
 	 */
 	isFunctionLikeDeclaration(node) {
