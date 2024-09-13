@@ -18,14 +18,14 @@ node dist/index.cjs get-path --file filename --line line --json --minified
 ### `map-diffs-to-paths`
 
 This command maps the diffs to their corresponding symbol paths.
-`diff-file` contains diffs in the format `<line>|<diff>`
+`diff-file` contains diffs in the format `<line>|<status>|<diff>`
 `file` is the source file in which all diffs are applied.
 
 ```bash
 node dist/index.cjs map-diffs-to-paths --file filename --diff-file diff-filename --plain
-# output <line>|<symbol_path>|<diff>
+# output <line>|<symbol_path>|<status>|<diff>
 node dist/index.cjs map-diffs-to-paths --file filename --diff-file diff-filename --json --minified
-# output [{"symbol":"<symbol_path>","line":<line>,"content":"<diff>"}
+# output [{"symbol":"<symbol_path>","line":<line>,"status": "<status>", "content":"<diff>"}
 ```
 
 ## References

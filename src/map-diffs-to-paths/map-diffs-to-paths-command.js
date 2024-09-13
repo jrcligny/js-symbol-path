@@ -23,6 +23,11 @@ export default class MapDiffsToPathsCommand {
 
 	/** @type {CommandBuilder} */
 	static builder = {
+		content: {
+			position: 0,
+			demandOption: false,
+			string: true,
+		},
 		file: {
 			alias: 'f',
 			describe: 'Source file to load',
@@ -129,8 +134,8 @@ export default class MapDiffsToPathsCommand {
 	 */
 	#outputPlain(diffCollection) {
 		const json = diffCollection.toJSON()
-		for (const { line, symbol, content } of json) {
-			console.log(`${line}|${symbol??''}|${content}`)
+		for (const { line, symbol, status, content } of json) {
+			console.log(`${line}|${symbol??''}|${status}|${content}`)
 		}
 	}
 

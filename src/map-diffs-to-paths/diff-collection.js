@@ -9,7 +9,7 @@ export class DiffCollectionFactory {
 
 export default class DiffCollection {
 
-	/** @type {Map<number, { line: string; symbol: string; content: string; }>} */
+	/** @type {Map<number, { line: string; symbol: string; status: string; content: string; }>} */
 	#lines
 
 	/** @type {number} */
@@ -25,17 +25,17 @@ export default class DiffCollection {
 		this.#lines = new Map()
 		lines
 			.map(line => {
-				const [num, ...content] = line.split('|')
-				return [parseInt(num, 10), content.join('|')]
+				const [num, status, ...content] = line.split('|')
+				return [parseInt(num, 10), status, content.join('|')]
 			})
-			.forEach(([line, content]) => {
+			.forEach(([line, status, content]) => {
 				if (!this.#firstLine || line < this.#firstLine) {
 					this.#firstLine = line
 				}
 				if (!this.#lastLine || line > this.#lastLine) {
 					this.#lastLine = line
 				}
-				this.#lines.set(line, { symbol: null, line, content })
+				this.#lines.set(line, { symbol: null, line, status, content })
 			})
 	}
 

@@ -1,9 +1,13 @@
-3|M|this.directories = directories;
-8|A|removeDirectory(directory) {
-9|A|this.directories = this.directories.filter(d => d !== directory);
-10|A|}
-16|A|
-17|A|export function instantiate(directories) {
-18|A|return new DirectoryListHandler(directories);
-19|A|}
-20|A|
+4|M|for (let i = 0; i < directories.length; i++) {
+5|M|this.addDirectory(directories[i]);
+6|M|}
+30|M|* Remove a directory from the list
+35|A|const filterCallback = function(d) {
+36|A|// Return all directories that are not the one we want to remove
+37|A|return d !== directory;
+38|A|}
+50|A|
+51|A|export function instantiate(directories) {
+52|A|return new DirectoryListHandler(directories);
+53|A|}
+54|A|
