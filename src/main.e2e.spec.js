@@ -75,25 +75,25 @@ describe('main', () => {
 			{ arg: 'get-path -f ./resources/lib-sample.js -l 4',
 				expected: 'DirectoryListHandler.constructor'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 11',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 45',
 				expected: 'DirectoryListHandler.reset'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 12',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 46',
 				expected: 'DirectoryListHandler.reset'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 13',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 47',
 				expected: 'DirectoryListHandler.reset'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 14',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 48',
 				expected: 'DirectoryListHandler.reset'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 15',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 49',
 				expected: 'DirectoryListHandler'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 17',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 51',
 				expected: 'instantiate'
 			},
-			{ arg: 'get-path -f ./resources/lib-sample.js -l 19',
+			{ arg: 'get-path -f ./resources/lib-sample.js -l 52',
 				expected: 'instantiate'
 			},
 			{ arg: 'get-path -f ./resources/lib-with-namespace-sample.js -l 6',
@@ -157,6 +157,25 @@ describe('main', () => {
 			expect(mockConsoleLog).toHaveBeenCalledWith(JSON.stringify({"file":"./resources/lib-sample.js","line":2,"path":"DirectoryListHandler.constructor"}))
 			expect(output).toBe('')
 		})
+
+		it('raises an error when the file does not exist', async () => {
+			// Arrange
+			const arg = 'get-path -f ./resources/invalid-file.js -l 1'
+			const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve, reject) => {
+				parser.parse(arg, (err, argv, output) => {
+					if (err) reject(err)
+					else resolve(output)
+				})
+			})
+
+			// Assert
+			expect(mockConsoleError).toHaveBeenCalledTimes(1)
+			expect(output).toBe('')
+		})
 	})
 
 	describe('map-diffs-to-paths', () => {
@@ -207,48 +226,93 @@ describe('main', () => {
 			expect(mockConsoleLog).toHaveBeenCalledWith(JSON.stringify([
 				{
 					"symbol": "DirectoryListHandler.constructor",
-					"line": 3,
-					"content": "M|this.directories = directories;"
+					"line": 4,
+					"status": "M",
+					"content": "for (let i = 0; i < directories.length; i++) {"
 				},
 				{
-					"symbol": "DirectoryListHandler.removeDirectory",
-					"line": 8,
-					"content": "A|removeDirectory(directory) {"
+					"symbol": "DirectoryListHandler.constructor",
+					"line": 5,
+					"status": "M",
+					"content": "this.addDirectory(directories[i]);"
 				},
 				{
-					"symbol": "DirectoryListHandler.removeDirectory",
-					"line": 9,
-					"content": "A|this.directories = this.directories.filter(d => d !== directory);"
+					"symbol": "DirectoryListHandler.constructor",
+					"line": 6,
+					"status": "M",
+					"content": "}"
 				},
 				{
-					"symbol": "DirectoryListHandler.removeDirectory",
-					"line": 10,
-					"content": "A|}"
-				},
-				{
-					"symbol": null,
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
 					"line": 16,
-					"content": "A|"
+					"status": "A",
+					"content": "// Return true if the directory already exists"
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
 					"line": 17,
-					"content": "A|export function instantiate(directories) {"
+					"status": "M",
+					"content": "return d === directory;"
 				},
 				{
-					"symbol": "instantiate",
-					"line": 18,
-					"content": "A|return new DirectoryListHandler(directories);"
+					"symbol": "DirectoryListHandler",
+					"line": 30,
+					"status": "M",
+					"content": "* Remove a directory from the list"
 				},
 				{
-					"symbol": "instantiate",
-					"line": 19,
-					"content": "A|}"
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 35,
+					"status": "A",
+					"content": "const filterCallback = function(d) {"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 36,
+					"status": "A",
+					"content": "// Return all directories that are not the one we want to remove"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 37,
+					"status": "A",
+					"content": "return d !== directory;"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 38,
+					"status": "A",
+					"content": "}"
 				},
 				{
 					"symbol": null,
-					"line": 20,
-					"content": "A|"
+					"line": 50,
+					"status": "A",
+					"content": ""
+				},
+				{
+					"symbol": null,
+					"line": 51,
+					"status": "A",
+					"content": "export function instantiate(directories) {"
+				},
+				{
+					"symbol": null,
+					"line": 52,
+					"status": "A",
+					"content": "return new DirectoryListHandler(directories);"
+				},
+				{
+					"symbol": null,
+					"line": 53,
+					"status": "A",
+					"content": "}"
+				},
+				{
+					"symbol": null,
+					"line": 54,
+					"status": "A",
+					"content": ""
 				}
 			], null, 2))
 			expect(output).toBe('')
@@ -272,48 +336,93 @@ describe('main', () => {
 			expect(mockConsoleLog).toHaveBeenCalledWith(JSON.stringify([
 				{
 					"symbol": "DirectoryListHandler.constructor",
-					"line": 3,
-					"content": "M|this.directories = directories;"
+					"line": 4,
+					"status": "M",
+					"content": "for (let i = 0; i < directories.length; i++) {"
 				},
 				{
-					"symbol": "DirectoryListHandler.removeDirectory",
-					"line": 8,
-					"content": "A|removeDirectory(directory) {"
+					"symbol": "DirectoryListHandler.constructor",
+					"line": 5,
+					"status": "M",
+					"content": "this.addDirectory(directories[i]);"
 				},
 				{
-					"symbol": "DirectoryListHandler.removeDirectory",
-					"line": 9,
-					"content": "A|this.directories = this.directories.filter(d => d !== directory);"
+					"symbol": "DirectoryListHandler.constructor",
+					"line": 6,
+					"status": "M",
+					"content": "}"
 				},
 				{
-					"symbol": "DirectoryListHandler.removeDirectory",
-					"line": 10,
-					"content": "A|}"
-				},
-				{
-					"symbol": null,
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
 					"line": 16,
-					"content": "A|"
+					"status": "A",
+					"content": "// Return true if the directory already exists"
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
 					"line": 17,
-					"content": "A|export function instantiate(directories) {"
+					"status": "M",
+					"content": "return d === directory;"
 				},
 				{
-					"symbol": "instantiate",
-					"line": 18,
-					"content": "A|return new DirectoryListHandler(directories);"
+					"symbol": "DirectoryListHandler",
+					"line": 30,
+					"status": "M",
+					"content": "* Remove a directory from the list"
 				},
 				{
-					"symbol": "instantiate",
-					"line": 19,
-					"content": "A|}"
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 35,
+					"status": "A",
+					"content": "const filterCallback = function(d) {"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 36,
+					"status": "A",
+					"content": "// Return all directories that are not the one we want to remove"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 37,
+					"status": "A",
+					"content": "return d !== directory;"
+				},
+				{
+					"symbol": "DirectoryListHandler.removeDirectory",
+					"line": 38,
+					"status": "A",
+					"content": "}"
 				},
 				{
 					"symbol": null,
-					"line": 20,
-					"content": "A|"
+					"line": 50,
+					"status": "A",
+					"content": ""
+				},
+				{
+					"symbol": null,
+					"line": 51,
+					"status": "A",
+					"content": "export function instantiate(directories) {"
+				},
+				{
+					"symbol": null,
+					"line": 52,
+					"status": "A",
+					"content": "return new DirectoryListHandler(directories);"
+				},
+				{
+					"symbol": null,
+					"line": 53,
+					"status": "A",
+					"content": "}"
+				},
+				{
+					"symbol": null,
+					"line": 54,
+					"status": "A",
+					"content": ""
 				}
 			]))
 			expect(output).toBe('')
@@ -333,16 +442,60 @@ describe('main', () => {
 			})
 	
 			// Assert
-			expect(mockConsoleLog).toHaveBeenCalledTimes(9)
-			expect(mockConsoleLog).toHaveBeenCalledWith('3|DirectoryListHandler.constructor|M|this.directories = directories;')
-			expect(mockConsoleLog).toHaveBeenCalledWith('8|DirectoryListHandler.removeDirectory|A|removeDirectory(directory) {')
-			expect(mockConsoleLog).toHaveBeenCalledWith('9|DirectoryListHandler.removeDirectory|A|this.directories = this.directories.filter(d => d !== directory);')
-			expect(mockConsoleLog).toHaveBeenCalledWith('10|DirectoryListHandler.removeDirectory|A|}')
-			expect(mockConsoleLog).toHaveBeenCalledWith('16||A|')
-			expect(mockConsoleLog).toHaveBeenCalledWith('17|instantiate|A|export function instantiate(directories) {')
-			expect(mockConsoleLog).toHaveBeenCalledWith('18|instantiate|A|return new DirectoryListHandler(directories);')
-			expect(mockConsoleLog).toHaveBeenCalledWith('19|instantiate|A|}')
-			expect(mockConsoleLog).toHaveBeenCalledWith('20||A|')
+			expect(mockConsoleLog).toHaveBeenCalledTimes(15)
+			expect(mockConsoleLog).toHaveBeenCalledWith('4|DirectoryListHandler.constructor|M|for (let i = 0; i < directories.length; i++) {')
+			expect(mockConsoleLog).toHaveBeenCalledWith('5|DirectoryListHandler.constructor|M|this.addDirectory(directories[i]);')
+			expect(mockConsoleLog).toHaveBeenCalledWith('6|DirectoryListHandler.constructor|M|}')
+			expect(mockConsoleLog).toHaveBeenCalledWith('51||A|export function instantiate(directories) {')
+			expect(mockConsoleLog).toHaveBeenCalledWith('53||A|}')
+			expect(mockConsoleLog).toHaveBeenCalledWith('54||A|')
+			expect(output).toBe('')
+		})
+
+		it.each([
+			{
+				arg: 'map-diffs-to-paths -f ./resources/lib-sample.js -d ./resources/invalid-file-with-empty-line.diff',
+				message: 'unexpected empty line at line 2',
+			},
+			{
+				arg: 'map-diffs-to-paths -f ./resources/lib-sample.js -d ./resources/invalid-file-with-unexpected-values.diff',
+				message: 'invalid line "0|-|" (4): line number should be greater than 0, status should be A, D, or M',
+			}
+		])('raises an error when the diff file is invalid', async ({ arg, message }) => {
+			// Arrange
+			const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve, reject) => {
+				parser.parse(arg, (err, argv, output) => {
+					if (err) reject(err)
+					else resolve(output)
+				})
+			})
+
+			// Assert
+			expect(mockConsoleError).toHaveBeenCalledTimes(1)
+			expect(mockConsoleError).toHaveBeenCalledWith(message)
+			expect(output).toBe('')
+		})
+
+		it('raises an error when the file does not exist', async () => {
+			// Arrange
+			const arg = 'map-diffs-to-paths -f ./resources/invalid-file.js -d ./resources/lib-sample.diff'
+			const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve, reject) => {
+				parser.parse(arg, (err, argv, output) => {
+					if (err) reject(err)
+					else resolve(output)
+				})
+			})
+
+			// Assert
+			expect(mockConsoleError).toHaveBeenCalledTimes(1)
 			expect(output).toBe('')
 		})
 	})

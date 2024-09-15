@@ -79,25 +79,29 @@ export default class GetPathCommand {
 	 * @returns {Promise<void>}
 	 */
 	async handler(argv) {
-		const { file, line } = argv
-
-		const content = await this.#fsHelper.readFile(file)
-
-		const sourceFile = await this.#tsHelper.createSourceFile(file, content)
-
-		const children = sourceFile.getChildren(sourceFile)	
-		const matchingNode = this.#findNode(children, line)
-
-		let path = ''
-		if (matchingNode) {
-			path = this.#tsHelper.getPath(matchingNode)
-		}
-
-		if (argv.json) {
-			this.#outputJson({ file, line, path }, argv.minified)
-		}
-		else {
-			this.#outputPlain(path)
+		try {
+			const { file, line } = argv
+	
+			const content = await this.#fsHelper.readFile(file)
+	
+			const sourceFile = await this.#tsHelper.createSourceFile(file, content)
+	
+			const children = sourceFile.getChildren(sourceFile)	
+			const matchingNode = this.#findNode(children, line)
+	
+			let path = ''
+			if (matchingNode) {
+				path = this.#tsHelper.getPath(matchingNode)
+			}
+	
+			if (argv.json) {
+				this.#outputJson({ file, line, path }, argv.minified)
+			}
+			else {
+				this.#outputPlain(path)
+			}
+		} catch (error) {
+			console.error(error.message)
 		}
 	}
 

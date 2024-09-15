@@ -23,6 +23,11 @@ export default class MapDiffsToPathsCommand {
 
 	/** @type {CommandBuilder} */
 	static builder = {
+		content: {
+			position: 0,
+			demandOption: false,
+			string: true,
+		},
 		file: {
 			alias: 'f',
 			describe: 'Source file to load',
@@ -88,23 +93,30 @@ export default class MapDiffsToPathsCommand {
 	 * @returns {Promise<void>}
 	 */
 	async handler(argv) {
-		const { file, diffFile } = argv
-
-		const content = await this.#fsHelper.readFile(file)
-		const sourceFile = await this.#tsHelper.createSourceFile(file, content)
-
-		const diffLines = await this.#fsHelper.readLines(diffFile)
-
-		const diffCollection = this.#diffCollectionFactory.create(diffLines)
-
-		const children = sourceFile.getChildren(sourceFile)
-		this.#findNodes(children, diffCollection)
-
-		if (argv.json) {
-			this.#outputJson(diffCollection, argv.minified)
+		try
+		{
+			const { file, diffFile } = argv
+	
+			const content = await this.#fsHelper.readFile(file)
+			const sourceFile = await this.#tsHelper.createSourceFile(file, content)
+	
+			const diffLines = await this.#fsHelper.readLines(diffFile)
+	
+			const diffCollection = this.#diffCollectionFactory.create(diffLines)
+	
+			const children = sourceFile.getChildren(sourceFile)
+			this.#findNodes(children, diffCollection)
+	
+			if (argv.json) {
+				this.#outputJson(diffCollection, argv.minified)
+			}
+			else {
+				this.#outputPlain(diffCollection)
+			}
 		}
-		else {
-			this.#outputPlain(diffCollection)
+		catch (error)
+		{
+			console.error(error.message)
 		}
 	}
 
@@ -129,8 +141,8 @@ export default class MapDiffsToPathsCommand {
 	 */
 	#outputPlain(diffCollection) {
 		const json = diffCollection.toJSON()
-		for (const { line, symbol, content } of json) {
-			console.log(`${line}|${symbol??''}|${content}`)
+		for (const { line, symbol, status, content } of json) {
+			console.log(`${line}|${symbol??''}|${status}|${content}`)
 		}
 	}
 
@@ -143,6 +155,10 @@ export default class MapDiffsToPathsCommand {
 			// Check if the node is in the diff range, if not skip it
 			const { startLine, endLine } = this.#tsHelper.getLineRange(node)
 			if (!diffCollection.hasDiffInRange(startLine, endLine)) {
+				continue
+			}
+
+			if (diffCollection.isNewLine(startLine)) {
 				continue
 			}
 
