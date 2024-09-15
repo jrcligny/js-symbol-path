@@ -224,6 +224,18 @@ describe('main', () => {
 					"content": "}"
 				},
 				{
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
+					"line": 16,
+					"status": "A",
+					"content": "// Return true if the directory already exists"
+				},
+				{
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
+					"line": 17,
+					"status": "M",
+					"content": "return d === directory;"
+				},
+				{
 					"symbol": "DirectoryListHandler",
 					"line": 30,
 					"status": "M",
@@ -260,28 +272,28 @@ describe('main', () => {
 					"content": ""
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": null,
 					"line": 51,
 					"status": "A",
 					"content": "export function instantiate(directories) {"
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": null,
 					"line": 52,
 					"status": "A",
 					"content": "return new DirectoryListHandler(directories);"
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": null,
 					"line": 53,
 					"status": "A",
-					"content":"}"
+					"content": "}"
 				},
 				{
-					"symbol":null,
-					"line":54,
-					"status":"A",
-					"content":""
+					"symbol": null,
+					"line": 54,
+					"status": "A",
+					"content": ""
 				}
 			], null, 2))
 			expect(output).toBe('')
@@ -322,6 +334,18 @@ describe('main', () => {
 					"content": "}"
 				},
 				{
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
+					"line": 16,
+					"status": "A",
+					"content": "// Return true if the directory already exists"
+				},
+				{
+					"symbol": "DirectoryListHandler.addDirectory.findCallback",
+					"line": 17,
+					"status": "M",
+					"content": "return d === directory;"
+				},
+				{
 					"symbol": "DirectoryListHandler",
 					"line": 30,
 					"status": "M",
@@ -358,28 +382,28 @@ describe('main', () => {
 					"content": ""
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": null,
 					"line": 51,
 					"status": "A",
 					"content": "export function instantiate(directories) {"
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": null,
 					"line": 52,
 					"status": "A",
 					"content": "return new DirectoryListHandler(directories);"
 				},
 				{
-					"symbol": "instantiate",
+					"symbol": null,
 					"line": 53,
 					"status": "A",
-					"content":"}"
+					"content": "}"
 				},
 				{
-					"symbol":null,
-					"line":54,
-					"status":"A",
-					"content":""
+					"symbol": null,
+					"line": 54,
+					"status": "A",
+					"content": ""
 				}
 			]))
 			expect(output).toBe('')
@@ -399,12 +423,12 @@ describe('main', () => {
 			})
 	
 			// Assert
-			expect(mockConsoleLog).toHaveBeenCalledTimes(13)
+			expect(mockConsoleLog).toHaveBeenCalledTimes(15)
 			expect(mockConsoleLog).toHaveBeenCalledWith('4|DirectoryListHandler.constructor|M|for (let i = 0; i < directories.length; i++) {')
 			expect(mockConsoleLog).toHaveBeenCalledWith('5|DirectoryListHandler.constructor|M|this.addDirectory(directories[i]);')
 			expect(mockConsoleLog).toHaveBeenCalledWith('6|DirectoryListHandler.constructor|M|}')
-			expect(mockConsoleLog).toHaveBeenCalledWith('51|instantiate|A|export function instantiate(directories) {')
-			expect(mockConsoleLog).toHaveBeenCalledWith('53|instantiate|A|}')
+			expect(mockConsoleLog).toHaveBeenCalledWith('51||A|export function instantiate(directories) {')
+			expect(mockConsoleLog).toHaveBeenCalledWith('53||A|}')
 			expect(mockConsoleLog).toHaveBeenCalledWith('54||A|')
 			expect(output).toBe('')
 		})

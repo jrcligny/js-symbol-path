@@ -151,6 +151,10 @@ export default class MapDiffsToPathsCommand {
 				continue
 			}
 
+			if (diffCollection.isNewLine(startLine)) {
+				continue
+			}
+
 			// Try to find the node in the children
 			const children = node.getChildren()
 			this.#findNodes(children, diffCollection)

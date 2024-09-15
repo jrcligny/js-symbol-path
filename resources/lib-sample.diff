@@ -1,6 +1,8 @@
 4|M|for (let i = 0; i < directories.length; i++) {
 5|M|this.addDirectory(directories[i]);
 6|M|}
+16|A|// Return true if the directory already exists
+17|M|return d === directory;
 30|M|* Remove a directory from the list
 35|A|const filterCallback = function(d) {
 36|A|// Return all directories that are not the one we want to remove

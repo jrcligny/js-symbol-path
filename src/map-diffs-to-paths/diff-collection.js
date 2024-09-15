@@ -61,6 +61,15 @@ export default class DiffCollection {
 	}
 
 	/**
+	 * @param {number} line 
+	 * @returns {boolean} True if the line is new, false otherwise
+	 */
+	isNewLine(line) {
+		const diff = this.#lines.get(line)
+		return diff && diff.status === 'A'
+	}
+
+	/**
 	 * @param {number} startLine 
 	 * @param {number} endLine 
 	 * @returns {boolean}
