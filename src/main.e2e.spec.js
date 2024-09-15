@@ -157,6 +157,25 @@ describe('main', () => {
 			expect(mockConsoleLog).toHaveBeenCalledWith(JSON.stringify({"file":"./resources/lib-sample.js","line":2,"path":"DirectoryListHandler.constructor"}))
 			expect(output).toBe('')
 		})
+
+		it('raises an error when the file does not exist', async () => {
+			// Arrange
+			const arg = 'get-path -f ./resources/invalid-file.js -l 1'
+			const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve, reject) => {
+				parser.parse(arg, (err, argv, output) => {
+					if (err) reject(err)
+					else resolve(output)
+				})
+			})
+
+			// Assert
+			expect(mockConsoleError).toHaveBeenCalledTimes(1)
+			expect(output).toBe('')
+		})
 	})
 
 	describe('map-diffs-to-paths', () => {
@@ -430,6 +449,25 @@ describe('main', () => {
 			expect(mockConsoleLog).toHaveBeenCalledWith('51||A|export function instantiate(directories) {')
 			expect(mockConsoleLog).toHaveBeenCalledWith('53||A|}')
 			expect(mockConsoleLog).toHaveBeenCalledWith('54||A|')
+			expect(output).toBe('')
+		})
+
+		it('raises an error when the file does not exist', async () => {
+			// Arrange
+			const arg = 'map-diffs-to-paths -f ./resources/invalid-file.js -d ./resources/lib-sample.diff'
+			const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve, reject) => {
+				parser.parse(arg, (err, argv, output) => {
+					if (err) reject(err)
+					else resolve(output)
+				})
+			})
+
+			// Assert
+			expect(mockConsoleError).toHaveBeenCalledTimes(1)
 			expect(output).toBe('')
 		})
 	})

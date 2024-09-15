@@ -93,23 +93,30 @@ export default class MapDiffsToPathsCommand {
 	 * @returns {Promise<void>}
 	 */
 	async handler(argv) {
-		const { file, diffFile } = argv
-
-		const content = await this.#fsHelper.readFile(file)
-		const sourceFile = await this.#tsHelper.createSourceFile(file, content)
-
-		const diffLines = await this.#fsHelper.readLines(diffFile)
-
-		const diffCollection = this.#diffCollectionFactory.create(diffLines)
-
-		const children = sourceFile.getChildren(sourceFile)
-		this.#findNodes(children, diffCollection)
-
-		if (argv.json) {
-			this.#outputJson(diffCollection, argv.minified)
+		try
+		{
+			const { file, diffFile } = argv
+	
+			const content = await this.#fsHelper.readFile(file)
+			const sourceFile = await this.#tsHelper.createSourceFile(file, content)
+	
+			const diffLines = await this.#fsHelper.readLines(diffFile)
+	
+			const diffCollection = this.#diffCollectionFactory.create(diffLines)
+	
+			const children = sourceFile.getChildren(sourceFile)
+			this.#findNodes(children, diffCollection)
+	
+			if (argv.json) {
+				this.#outputJson(diffCollection, argv.minified)
+			}
+			else {
+				this.#outputPlain(diffCollection)
+			}
 		}
-		else {
-			this.#outputPlain(diffCollection)
+		catch (error)
+		{
+			console.error(error.message)
 		}
 	}
 
