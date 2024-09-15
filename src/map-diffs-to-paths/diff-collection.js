@@ -24,19 +24,8 @@ export default class DiffCollection {
 	constructor(lines) {
 		this.#lines = new Map()
 		lines
-			.map(line => {
-				const [num, status, ...content] = line.split('|')
-				return [parseInt(num, 10), status, content.join('|')]
-			})
-			.forEach(([line, status, content]) => {
-				if (!this.#firstLine || line < this.#firstLine) {
-					this.#firstLine = line
-				}
-				if (!this.#lastLine || line > this.#lastLine) {
-					this.#lastLine = line
-				}
-				this.#lines.set(line, { symbol: null, line, status, content })
-			})
+			.map(this.#parseLine)
+			.forEach(this.#addLine.bind(this))
 	}
 
 	/**
@@ -90,5 +79,41 @@ export default class DiffCollection {
 
 	toJSON() {
 		return Array.from(this.#lines.values())
+	}
+
+	#parseLine(line, index) {
+		if (!line?.trim()) {
+			throw new Error(`unexpected empty line at line ${index+1}`)
+		}
+		const [rawNum, rawStatus, ...content] = line.split('|')
+		const errors = []
+		const num = parseInt(rawNum, 10)
+		if (isNaN(num)) {
+			errors.push('line number should be an integer')
+		}
+		else if (num < 1) {
+			errors.push('line number should be greater than 0')
+		}
+		const status = rawStatus?.toUpperCase()
+		if (!['A', 'D', 'M'].includes(status)) {
+			errors.push('status should be A, D, or M')
+		}
+		if (content.length === 0) {
+			errors.push('diff should not be empty')
+		}
+		if (errors.length > 0) {
+			throw new Error(`invalid line "${line}" (${index+1}): ${errors.join(', ')}`)
+		}
+		return [num, status, content.join('|')]
+	}
+
+	#addLine([line, status, content]) {
+		if (!this.#firstLine || line < this.#firstLine) {
+			this.#firstLine = line
+		}
+		if (!this.#lastLine || line > this.#lastLine) {
+			this.#lastLine = line
+		}
+		this.#lines.set(line, { symbol: null, line, status, content })
 	}
 }

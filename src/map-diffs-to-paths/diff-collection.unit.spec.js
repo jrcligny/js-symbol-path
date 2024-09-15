@@ -7,15 +7,13 @@ describe('diff-collection', () => {
 
 	const createInstance = (lines) => new DiffCollection(lines)
 
-	// @TODO: add tests with wrong inputs
-
 	describe('factory', () => {
 		it('creates a new instance', () => {
 			// Arrange
 			const factory = new DiffCollectionFactory()
 
 			// Act
-			const instance = factory.create(['3|A|line3', '1|M|line1', '2|D|line2', '8|D|line8', '7|M|line7'])
+			const instance = factory.create(['3|a|line3', '1|M|line1', '2|d|line2', '8|D|line8', '7|m|line7'])
 
 			// Assert
 			expect(instance).toBeInstanceOf(DiffCollection)
@@ -27,6 +25,25 @@ describe('diff-collection', () => {
 				{ symbol: null, line: 7, status: 'M', content: 'line7' },
 			])
 			expect(instance.getRange()).toEqual({ start: 1, end: 8 })
+		})
+
+		it.each([
+			{ lines: ['|foo'], message: 'invalid line "|foo" (1): line number should be an integer, status should be A, D, or M, diff should not be empty' },
+			{ lines: ['M|line1'], message: 'invalid line "M|line1" (1): line number should be an integer, status should be A, D, or M, diff should not be empty' },
+			{ lines: ['2|line2'], message: 'invalid line "2|line2" (1): status should be A, D, or M, diff should not be empty' },
+			{ lines: ['2|D|content', '0'], message: 'invalid line "0" (2): line number should be greater than 0, status should be A, D, or M, diff should not be empty' },
+			{ lines: ['1000|m|content', '-1|-|content|extra'], message: 'invalid line "-1|-|content|extra" (2): line number should be greater than 0, status should be A, D, or M' },
+			{ lines: ['999999|a|content', ''], message: 'unexpected empty line at line 2' },
+			{ lines: [undefined], message: 'unexpected empty line at line 1' },
+		])('creates a new instance with invalid lines', ({lines, message}) => {
+			// Arrange
+			const factory = new DiffCollectionFactory()
+
+			// Act
+			const create = () => factory.create(lines)
+
+			// Assert
+			expect(create).toThrow(message)
 		})
 	})
 
@@ -53,7 +70,7 @@ describe('diff-collection', () => {
 
 			// Assert
 			expect(result).toBe(false)
-			expect(instance.toJSON()).toContainEqual({ symbol: 'foo', line: 1, status: 'm', content: 'line1' })
+			expect(instance.toJSON()).toContainEqual({ symbol: 'foo', line: 1, status: 'M', content: 'line1' })
 		})
 
 		it('does not set the symbol for the line if not found', () => {
@@ -171,8 +188,8 @@ describe('diff-collection', () => {
 
 			// Assert
 			expect(result).toEqual([
-				{ symbol: null, line: 1, status: 'a', content: 'line1' },
-				{ symbol: null, line: 2, status: 'm', content: 'line2' },
+				{ symbol: null, line: 1, status: 'A', content: 'line1' },
+				{ symbol: null, line: 2, status: 'M', content: 'line2' },
 			])
 		})
 	})

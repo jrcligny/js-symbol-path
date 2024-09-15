@@ -1,0 +1,4 @@
+4|M|for (let i = 0; i < directories.length; i++) {
+5|M|this.addDirectory(directories[i]);
+6|M|}
+0|-|

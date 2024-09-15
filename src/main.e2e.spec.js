@@ -452,6 +452,34 @@ describe('main', () => {
 			expect(output).toBe('')
 		})
 
+		it.each([
+			{
+				arg: 'map-diffs-to-paths -f ./resources/lib-sample.js -d ./resources/invalid-file-with-empty-line.diff',
+				message: 'unexpected empty line at line 2',
+			},
+			{
+				arg: 'map-diffs-to-paths -f ./resources/lib-sample.js -d ./resources/invalid-file-with-unexpected-values.diff',
+				message: 'invalid line "0|-|" (4): line number should be greater than 0, status should be A, D, or M',
+			}
+		])('raises an error when the diff file is invalid', async ({ arg, message }) => {
+			// Arrange
+			const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation(() => {})
+	
+			// Act
+			// run the command module with the file and line arguments
+			const output = await new Promise((resolve, reject) => {
+				parser.parse(arg, (err, argv, output) => {
+					if (err) reject(err)
+					else resolve(output)
+				})
+			})
+
+			// Assert
+			expect(mockConsoleError).toHaveBeenCalledTimes(1)
+			expect(mockConsoleError).toHaveBeenCalledWith(message)
+			expect(output).toBe('')
+		})
+
 		it('raises an error when the file does not exist', async () => {
 			// Arrange
 			const arg = 'map-diffs-to-paths -f ./resources/invalid-file.js -d ./resources/lib-sample.diff'
